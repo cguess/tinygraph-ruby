@@ -1,4 +1,5 @@
 # Frozen_string_literal: true
+require "debug"
 
 module Tinygraph
   # A graph
@@ -22,66 +23,52 @@ module Tinygraph
       to_node.edges_in << from_node
     end
 
-    def breadth_first_traversal(node, distance: nil)
+    def breadth_first_traversal(node, distance: -1)
       queue = [node]
       visited = []
+      next_level = []
 
-      if distance.nil?
-        until queue.empty?
-          # Get the first node in the queue
-          current_node = queue.shift
+      # We slightly modify the algorithm so we can find a distance if we want
+      distance += 1 unless distance.negative?
 
-          # Well, we've visited it!
-          visited << current_node
-          # Add the nodes that this links to to the queue
-          queue += current_node.edges_out.reject { |n| visited.include?(n) }
-        end
-      else
-        # Weirdly a lot more complex, though probably possible to merge
-        depth = 0
-        results = [node] + node.edges_out
+      until queue.empty?
+        # Get the first node in the queue
+        current_node = queue.shift
+        visited << current_node
 
-        visited << node
-        while depth < distance - 1
-          next_loop = results.reject { |n| visited.include?(n) }
-          next_loop.each do |n|
-            visited << n
-            results += n.edges_out
-          end
+        # Add the nodes that this links to the next level
+        next_level += current_node.edges_out.reject { |n| visited.include?(n) }
 
-          depth += 1 if depth < distance
-        end
+        # If we have nodes in the queue, keep processing them
+        next unless queue.count.zero?
 
-        return results
+        # If we *are* caring about distance, then reduce the distance by 1 since we're through a level
+        # If we're not caring this will just keep decrementing, doesn't matter
+        distance -= 1
+
+        # If we care about distance and we're at 0, then we're done
+        break if distance.zero?
+
+        # Otherwise... if we don't have any nodes in the queue, then we're done with this level,
+        # add the next ones to the queue and clear the next level
+        queue += next_level
+        next_level = []
       end
 
       visited
     end
 
-    # Same thing as breadth first, but with a stack instead of a queue
-    # I'm sure it's easy enough to merge these two methods, but I'm not sure how/don't have time
-    def depth_first_traversal(node, distance: nil)
-      stack = [node]
+    # Depth first traversal, obviously. The distance is the number of hops from `node` to traverse
+    # if the distance is less than 0 then it will traverse the entire graph
+    def depth_first_traversal(node, distance: -1)
       visited = []
 
-      if distance.nil?
-        until stack.empty?
-          # Get the first node in the stack
-          current_node = stack.shift
+      visited << node
+      return visited if distance.zero?
 
-          # Well, we've visited it!
-          visited << current_node
-          # Add the nodes that this links to to the stack
-          stack = current_node.edges_out.reject { |n| visited.include?(n) } + stack
-        end
-      else
-        visited << node
-        return visited if distance.zero?
-
-        # Recursive is probably the easiest way to do this
-        node.edges_out.each do |n|
-          visited += depth_first_traversal(n, distance: distance - 1)
-        end
+      # Recursive is probably the easiest way to do this
+      node.edges_out.each do |n|
+        visited += depth_first_traversal(n, distance: distance - 1)
       end
 
       visited
