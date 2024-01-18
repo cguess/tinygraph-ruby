@@ -1,5 +1,4 @@
 # Frozen_string_literal: true
-require "debug"
 
 module Tinygraph
   # A graph
