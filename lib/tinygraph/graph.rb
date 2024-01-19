@@ -79,6 +79,18 @@ module Tinygraph
       @index.find_edges_by_attribute(attribute)
     end
 
+    def find_edges_by_attributes(attributes = [])
+      @index.find_edges_by_attributes(attributes)
+    end
+
+    def find_edges_by_attribute_and_value(attribute, value)
+      @index.find_edge_by_attribute_and_value(attribute, value)
+    end
+
+    def find_edges_by_attributes_and_values(attributes = {})
+      @index.find_edge_by_attributes_and_values(attributes)
+    end
+
     def breadth_first_traversal(node, distance: -1)
       # First make sure the node is actually in the graph...
       raise "Node #{node.name} is not in the graph" unless @nodes.include?(node)
