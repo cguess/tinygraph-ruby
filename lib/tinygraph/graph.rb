@@ -9,6 +9,7 @@
 # - [x] Find edge by from
 # - [x] Find edge by to
 # - [x] Find edge by id
+# - [x] find edge by attribute
 
 require "debug"
 
@@ -72,6 +73,10 @@ module Tinygraph
       else
         @index.find_edge_by_id(id)
       end
+    end
+
+    def find_edges_by_attribute(attribute)
+      @index.find_edges_by_attribute(attribute)
     end
 
     def breadth_first_traversal(node, distance: -1)

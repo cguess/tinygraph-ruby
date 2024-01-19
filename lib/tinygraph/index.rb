@@ -48,5 +48,58 @@ module Tinygraph
     def find_edge_by_id(id)
       @edges.find { |edge| edge.id == id }
     end
+
+    def find_edges_by_attribute(attribute)
+      @edges.select { |edge| edge.attribute?(attribute) }
+    end
+
+    def find_edges_by_attributes(attributes = [])
+      @edges.select do |edge|
+        valid = true
+        attributes.each do |attribute|
+          valid = false unless edge.attribute?(attribute)
+        end
+
+        valid
+      end
+    end
+
+    def find_edge_by_attribute_and_value(attribute, value)
+      @edges.find do |edge|
+        edge.attribute?(attribute) && edge.attribute(attribute) == value
+      end
+    end
+
+    def find_edge_by_attributes_and_values(attributes = {})
+      @edges.each do |edge|
+        valid = false
+
+        attributes.each do |key, value|
+          valid = true if edge.attribute?(key) &&
+                          edge.attribute(key) == value
+        end
+
+        return edge if valid
+      end
+    end
+
+    def find_edges_by_attribute_and_value(attribute, value)
+      @edges.select do |edge|
+        edge.attribute?(attribute) && edge.attribute(attribute) == value
+      end
+    end
+
+    def find_edges_by_attributes_and_values(attributes = {})
+      @edges.select do |edge|
+        valid = true
+
+        attributes.each do |key, value|
+          valid = false unless edge.attribute?(key) &&
+                               edge.attribute(key) == value
+        end
+
+        valid
+      end
+    end
   end
 end
