@@ -1,8 +1,8 @@
 # Frozen_string_literal: true
 
 # TODO: Implement the following methods
-# - [ ] Remove node
-# - [ ] Remove edge
+# - [x] Remove node
+# - [x] Remove edge
 # - [x] Find node by name
 # - [x] Find node by id
 # - [ ] Find edge by from and to
@@ -30,7 +30,7 @@ module Tinygraph
     def delete_node(node)
       node.edges.each { |edge| delete_edge(edge) }
 
-      @index.nodes.delete(node)
+      @index.delete_node(node)
       @nodes.delete(node)
     end
 
@@ -40,19 +40,34 @@ module Tinygraph
 
       edge.from = nil
       edge.to = nil
+
+      @index.delete_edge(edge)
     end
 
     def add_edge(from, to)
-      Edge.new(from, to)
+      edge = Edge.new(from, to)
+      @index.add_edge(edge)
     end
 
     def find_node(name: nil, id: nil)
       raise "You must provide either a name or an id" if name.nil? && id.nil?
 
       if name
-        @index.find_by_name(name)
+        @index.find_node_by_name(name)
       else
-        @index.find_by_id(id)
+        @index.find_node_by_id(id)
+      end
+    end
+
+    def find_edge(from: nil, to: nil)
+      raise "You must provide either a from or a to" if from.nil? && to.nil?
+
+      if from && to
+        @index.find_edge_by_from_and_to(from, to)
+      elsif from
+        @index.find_edge_by_from(from)
+      else
+        @index.find_edge_by_to(to)
       end
     end
 
