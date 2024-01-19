@@ -55,7 +55,7 @@ class TestGraph < Minitest::Test
     graph = build_big_graph
     edge = graph.nodes.first.edges.first
     edge.add_attribute("test attribute", "test value")
-    assert graph.find_edge(attribute: "test attribute")
+    assert graph.find_edges_by_attribute("test attribute")
   end
 
   def test_find_edges_by_attributes
@@ -70,15 +70,7 @@ class TestGraph < Minitest::Test
     graph = build_big_graph
     edge = graph.nodes.first.edges.first
     edge.add_attribute("test attribute", "test value")
-    assert graph.find_edge(attribute: "test attribute", value: "test value")
-  end
-
-  def test_find_edges_by_attribute_and_value
-    graph = build_big_graph
-    edge = graph.nodes.first.edges.first
-    edge.add_attribute("test attribute", "test value")
-    edge.add_attribute("test attribute 2", "test value 2")
-    assert graph.find_edges_by_attribute_and_value("test attribute", "test value").include?(edge)
+    assert graph.find_edge_by_attribute_and_value("test attribute", "test value") == edge
   end
 
   def test_find_edges_by_attributes_and_values
@@ -86,8 +78,10 @@ class TestGraph < Minitest::Test
     edge = graph.nodes.first.edges.first
     edge.add_attribute("test attribute", "test value")
     edge.add_attribute("test attribute 2", "test value 2")
-    assert graph.find_edges_by_attributes_and_values("test attribute" => "test value", "test attribute 2" => "test value 2").include?(edge)
+    assert graph.find_edges_by_attributes_and_values({ "test attribute": "test value",
+                                                       "test attribute 2": "test value 2" }).include?(edge)
   end
+
   def test_delete_edge
     graph = build_big_graph
     node = graph.find_node(name: "node3")
