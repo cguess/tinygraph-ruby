@@ -44,5 +44,9 @@ module Tinygraph
     def find_edge_by_to(to)
       @edges.find { |edge| edge.to == to }
     end
+
+    def find_edge_by_id(id)
+      @edges.find { |edge| edge.id == id }
+    end
   end
 end

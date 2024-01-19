@@ -45,6 +45,12 @@ class TestGraph < Minitest::Test
     assert graph.find_edge(to: node2)
   end
 
+  def test_find_edge_by_id
+    graph = build_big_graph
+    edge = graph.nodes.first.edges.first
+    assert graph.find_edge(id: edge.id)
+  end
+
   def test_delete_edge
     graph = build_big_graph
     node = graph.find_node(name: "node3")

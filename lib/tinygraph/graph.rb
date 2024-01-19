@@ -5,10 +5,10 @@
 # - [x] Remove edge
 # - [x] Find node by name
 # - [x] Find node by id
-# - [ ] Find edge by from and to
-# - [ ] Find edge by from
-# - [ ] Find edge by to
-# - [ ] Find edge by id
+# - [x] Find edge by from and to
+# - [x] Find edge by from
+# - [x] Find edge by to
+# - [x] Find edge by id
 
 require "debug"
 
@@ -59,15 +59,18 @@ module Tinygraph
       end
     end
 
-    def find_edge(from: nil, to: nil)
-      raise "You must provide either a from or a to" if from.nil? && to.nil?
+    def find_edge(from: nil, to: nil, id: nil)
+      raise "You must provide either a from, a to, or an id" if from.nil? && to.nil? && id.nil?
+      raise "If you provide an id you can't look for other attributes" if id && (from || to)
 
       if from && to
         @index.find_edge_by_from_and_to(from, to)
       elsif from
         @index.find_edge_by_from(from)
-      else
+      elsif to
         @index.find_edge_by_to(to)
+      else
+        @index.find_edge_by_id(id)
       end
     end
 
