@@ -13,7 +13,11 @@ module Tinygraph
     end
 
     def to_s
-      "#{@name}:#{@id} -> #{@edges_out.map { |node| "#{node.name}:#{@id}, " }}"
+      "#{@name}:#{@id} -> #{@edges_out.map { |e| "#{e.to.name}:#{@id}, " }}"
+    end
+
+    def edges
+      @edges_in + @edges_out
     end
   end
 end

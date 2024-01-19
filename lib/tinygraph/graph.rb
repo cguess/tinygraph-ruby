@@ -1,5 +1,17 @@
 # Frozen_string_literal: true
 
+# TODO: Implement the following methods
+# - [ ] Remove node
+# - [ ] Remove edge
+# - [x] Find node by name
+# - [x] Find node by id
+# - [ ] Find edge by from and to
+# - [ ] Find edge by from
+# - [ ] Find edge by to
+# - [ ] Find edge by id
+
+require "debug"
+
 module Tinygraph
   # A graph
   class Graph
@@ -12,17 +24,42 @@ module Tinygraph
 
     def add_node(node)
       @nodes << node
+      @index.add_node(node)
+    end
+
+    def delete_node(node)
+      node.edges.each { |edge| delete_edge(edge) }
+
+      @index.nodes.delete(node)
+      @nodes.delete(node)
+    end
+
+    def delete_edge(edge)
+      edge.from.edges_out.delete(edge)
+      edge.to.edges_in.delete(edge)
+
+      edge.from = nil
+      edge.to = nil
     end
 
     def add_edge(from, to)
-      from_node = @nodes.find { |node| node.id == from.id }
-      to_node = @nodes.find { |node| node.id == to.id }
+      Edge.new(from, to)
+    end
 
-      from_node.edges_out << to_node
-      to_node.edges_in << from_node
+    def find_node(name: nil, id: nil)
+      raise "You must provide either a name or an id" if name.nil? && id.nil?
+
+      if name
+        @index.find_by_name(name)
+      else
+        @index.find_by_id(id)
+      end
     end
 
     def breadth_first_traversal(node, distance: -1)
+      # First make sure the node is actually in the graph...
+      raise "Node #{node.name} is not in the graph" unless @nodes.include?(node)
+
       queue = [node]
       visited = []
       next_level = []
@@ -36,7 +73,8 @@ module Tinygraph
         visited << current_node
 
         # Add the nodes that this links to the next level
-        next_level += current_node.edges_out.reject { |n| visited.include?(n) }
+        nodes = current_node.edges_out.map(&:to)
+        next_level += nodes.reject { |n| visited.include?(n) }
 
         # If we have nodes in the queue, keep processing them
         next unless queue.count.zero?
@@ -60,6 +98,9 @@ module Tinygraph
     # Depth first traversal, obviously. The distance is the number of hops from `node` to traverse
     # if the distance is less than 0 then it will traverse the entire graph
     def depth_first_traversal(node, distance: -1)
+      # First make sure the node is actually in the graph...
+      raise "Node #{node.name} is not in the graph" unless @nodes.include?(node)
+
       visited = []
 
       visited << node
@@ -67,7 +108,7 @@ module Tinygraph
 
       # Recursive is probably the easiest way to do this
       node.edges_out.each do |n|
-        visited += depth_first_traversal(n, distance: distance - 1)
+        visited += depth_first_traversal(n.to, distance: distance - 1)
       end
 
       visited

@@ -8,5 +8,4 @@ require_relative "tinygraph/index"
 
 module Tinygraph
   class Error < StandardError; end
-  # Your code goes here...
 end

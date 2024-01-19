@@ -12,11 +12,11 @@ module Tinygraph
       @nodes << node
     end
 
-    def find_with_name(name)
+    def find_by_name(name)
       @nodes.find { |node| node.name == name }
     end
 
-    def find_with_id(id)
+    def find_by_id(id)
       @nodes.find { |node| node.id == id }
     end
   end

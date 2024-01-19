@@ -12,13 +12,13 @@ class TestIndex < Minitest::Test
     index = Tinygraph::Index.new
     node = Tinygraph::Node.new("test node")
     index.add_node(node)
-    assert index.find_with_name("test node") == node
+    assert index.find_by_name("test node") == node
   end
 
   def test_finding_a_node_by_id
     index = Tinygraph::Index.new
     node = Tinygraph::Node.new("test node")
     index.add_node(node)
-    assert index.find_with_id(node.id) == node
+    assert index.find_by_id(node.id) == node
   end
 end
